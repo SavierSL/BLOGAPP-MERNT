@@ -34,10 +34,10 @@ export const registerUser: RequestHandler = async (req: Req, res: Res) => {
       avatar,
       date,
     });
-    await user.save();
     //bcrypt password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
+    await user.save();
     //Return the jsonwebtoken
     const payload = {
       user: {

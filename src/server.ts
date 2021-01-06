@@ -5,7 +5,9 @@ import logging from "../src/config/logging";
 import config from "../src/config/config";
 import sample from "./routes/sample";
 import { connectDB } from "./config/db";
+// routers
 import users from "../src/routes/users";
+import auth from "../src/routes/auth";
 import { Res, Req, Nxt } from "../src/TS/types";
 
 const NAMESPACE = "Server";
@@ -52,10 +54,10 @@ app.use((req: Req, res: Res, next: Nxt) => {
 //Routes
 app.use("/sample", sample.router);
 app.use("/users", users.router);
-
+app.use("/auth", auth.router);
 //Error Handling
 app.use((req: Req, res: Res, next: Nxt) => {
-  const error = "not found";
+  const error = "api not found";
   res.status(404).json({
     message: error,
   });
