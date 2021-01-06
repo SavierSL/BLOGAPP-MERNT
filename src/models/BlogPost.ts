@@ -1,7 +1,7 @@
 import mongoose, { model, Schema, Model, Document } from "mongoose";
 import { ObjectID } from "mongodb";
 
-interface IBlogPost extends Document {
+export interface IBlogPost extends Document {
   user: ObjectID;
   name: string;
   title: string;
@@ -28,7 +28,7 @@ const BlogPostSchema: Schema = new mongoose.Schema({
     required: true,
     trimg: true,
   },
-  comment: { type: Array, default: [] },
+  comments: { type: Array, default: [] },
   likes: { type: Array, default: [] },
   date: {
     type: Date,

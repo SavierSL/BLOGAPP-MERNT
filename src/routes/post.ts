@@ -1,7 +1,11 @@
 import express from "express";
 import { auth } from "../middleware/auth";
 import { check } from "express-validator";
-import { BlogPostCTRL, BlogPostDeleteCTRL } from "../controllers/postCtrl";
+import {
+  BlogPostCTRL,
+  BlogPostDeleteCTRL,
+  BlogPostLikeCTRL,
+} from "../controllers/postCtrl";
 const router = express.Router();
 
 //@METHOD post
@@ -15,8 +19,13 @@ router.post("/blog-post", [
 ]);
 
 //@METHOD post
-//@Register
+//@Delete Post
 //@api /post/blog-post/:post_id
 router.delete("/blog-post/:post_id", auth, BlogPostDeleteCTRL);
+
+//@METHOD post
+//@Like Post
+//@api /post/blog-post/:post_id
+router.patch("/blog-post/:post_id", auth, BlogPostLikeCTRL);
 
 export default { router };
