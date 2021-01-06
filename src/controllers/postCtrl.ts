@@ -34,3 +34,21 @@ export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
     res.status(400).json({ msg: error });
   }
 };
+
+export const BlogPostDeleteCTRL: RequestHandler = async (
+  req: Req,
+  res: Res
+) => {
+  const blogPostID = (req.params as { post_id: string }).post_id;
+  try {
+    const postToDelete = await BlogPost.findByIdAndDelete(blogPostID);
+    if (!postToDelete) {
+      return res
+        .status(400)
+        .json({ msg: "Inavalid ID there is no post to delete" });
+    }
+    res.json({ msg: "Deleted", deleted: postToDelete });
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+};
