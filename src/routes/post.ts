@@ -25,7 +25,7 @@ router.delete("/blog-post/:post_id", auth, BlogPostDeleteCTRL);
 
 //@METHOD post
 //@Like Post
-//@api /post/blog-post/:post_id
+//@api
 router.patch("/blog-post/:post_id", auth, BlogPostLikeCTRL);
 
 export default { router };

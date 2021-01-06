@@ -63,7 +63,24 @@ export const BlogPostLikeCTRL: RequestHandler = async (req: Req, res: Res) => {
     if (!post) {
       return res.status(400).json({ msg: "Invalid psot ID" });
     }
-    post.likes?.push(user!);
+    let newLikes = [];
+    const isLiked = post.likes!.filter((like) => {
+      const likeID: string = (like as any)._id.toString();
+      return likeID === userID;
+    });
+    console.log(post.likes);
+    console.log(isLiked);
+    console.log(userID);
+    if (isLiked?.length !== 0) {
+      newLikes = post.likes!.filter((like) => {
+        const likeID = (like as any)._id.toString();
+        return likeID !== userID;
+      });
+      post.likes = newLikes;
+      await post.save();
+      return res.json(post);
+    }
+    (post as any).likes?.push(user);
     await post.save();
     res.json(post);
   } catch (error) {
