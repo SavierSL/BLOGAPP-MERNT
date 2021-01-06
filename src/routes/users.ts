@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
-import { registerUser } from "../controllers/users";
+import { registerUserCTRL } from "../controllers/userCtrls";
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post(
       .isEmpty()
       .isLength({ min: 6 }),
   ],
-  registerUser
+  registerUserCTRL
 );
 
 export default { router };

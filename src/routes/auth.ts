@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import { Res, Req, Nxt } from "../TS/types";
 import { User } from "../models/User";
 import { auth } from "../middleware/auth";
-import { logInUser } from "../controllers/auth";
+import { logInUser } from "../controllers/authCtrl";
 const router = express.Router();
 
 //@METHOD post

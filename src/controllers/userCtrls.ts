@@ -6,8 +6,9 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User";
 import { Req, Res, Nxt } from "../TS/types";
 import { settings } from "../config/settings";
+import { IUser } from "../models/User";
 
-export const registerUser: RequestHandler = async (req: Req, res: Res) => {
+export const registerUserCTRL: RequestHandler = async (req: Req, res: Res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ msg: errors.array() });
@@ -17,7 +18,7 @@ export const registerUser: RequestHandler = async (req: Req, res: Res) => {
   const name = (req.body as { name: string }).name;
   const date = (req.body as { date: string }).date;
   try {
-    let user = await User.findOne({ email: email });
+    let user: IUser | null = await User.findOne({ email: email });
     if (user) {
       return res.status(400).json({ msg: "Email already exist" });
     }

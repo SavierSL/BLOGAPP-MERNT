@@ -5,10 +5,11 @@ import logging from "../src/config/logging";
 import config from "../src/config/config";
 import sample from "./routes/sample";
 import { connectDB } from "./config/db";
+import { Res, Req, Nxt } from "../src/TS/types";
 // routers
 import users from "../src/routes/users";
 import auth from "../src/routes/auth";
-import { Res, Req, Nxt } from "../src/TS/types";
+import post from "../src/routes/post";
 
 const NAMESPACE = "Server";
 const router = express.Router();
@@ -55,6 +56,7 @@ app.use((req: Req, res: Res, next: Nxt) => {
 app.use("/sample", sample.router);
 app.use("/users", users.router);
 app.use("/auth", auth.router);
+app.use("/post", post.router);
 //Error Handling
 app.use((req: Req, res: Res, next: Nxt) => {
   const error = "api not found";

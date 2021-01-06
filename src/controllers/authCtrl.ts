@@ -4,11 +4,12 @@ import { RequestHandler } from "express";
 import { User } from "../models/User";
 import jwt from "jsonwebtoken";
 import { settings } from "../config/settings";
+import { IUser } from "../models/User";
 
 export const logInUser: RequestHandler = async (req: Req, res: Res) => {
   const password = (req.body as { password: string }).password;
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user: IUser | null = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(400).json({ msg: "Invalid Email" });
     }
