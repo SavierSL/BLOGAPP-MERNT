@@ -10,6 +10,8 @@ import { Res, Req, Nxt } from "../src/TS/types";
 import users from "../src/routes/users";
 import auth from "../src/routes/auth";
 import post from "../src/routes/post";
+import profile from "../src/routes/profile";
+
 import multer from "multer";
 
 const NAMESPACE = "Server";
@@ -58,6 +60,8 @@ app.use("/sample", sample.router);
 app.use("/users", users.router);
 app.use("/auth", auth.router);
 app.use("/post", post.router);
+app.use("/profile", profile.router);
+
 //Error Handling
 app.use((req: Req, res: Res, next: Nxt) => {
   const error = "api not found";
