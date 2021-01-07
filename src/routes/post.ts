@@ -7,17 +7,31 @@ import {
   BlogPostLikeCTRL,
   BlogPostCommentCTRL,
   BlogPostDeleteCommentCTRL,
+  BlogPostEditPostCTRL,
+  upload,
 } from "../controllers/postCtrl";
 const router = express.Router();
 
 //@METHOD post
-//@Register
+//@post a blogpost
 //@api /post/blog-post
 router.post("/blog-post", [
+  upload.single("image"),
   auth,
+
   check("title", "Title is required").not().isEmpty(),
   check("blogContent", "Blog Content is required").not().isEmpty(),
   BlogPostCTRL,
+]);
+
+//@METHOD patch
+//@edit a blogpost
+//@api /post/blog-post
+router.patch("/blog-post/edit-post/:post_id", [
+  auth,
+  check("title", "Title is required").not().isEmpty(),
+  check("blogContent", "Blog Content is required").not().isEmpty(),
+  BlogPostEditPostCTRL,
 ]);
 
 //@METHOD post

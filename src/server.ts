@@ -10,6 +10,7 @@ import { Res, Req, Nxt } from "../src/TS/types";
 import users from "../src/routes/users";
 import auth from "../src/routes/auth";
 import post from "../src/routes/post";
+import multer from "multer";
 
 const NAMESPACE = "Server";
 const router = express.Router();

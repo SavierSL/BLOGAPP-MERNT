@@ -4,6 +4,23 @@ import { User, IUser } from "../models/User";
 import { validationResult } from "express-validator";
 import { Req, Res, Nxt } from "../TS/types";
 import { ObjectID } from "mongodb";
+import multer from "multer";
+
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "src/public/uploads/images");
+  },
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + file.originalname);
+  },
+});
+
+export const upload = multer({
+  storage: storage,
+  limits: {
+    fieldSize: 1024 * 1024 * 3,
+  },
+});
 
 //POST A BLOGPOST
 export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
@@ -14,6 +31,9 @@ export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
   const title = (req.body as { title: string }).title;
   const blogContent = (req.body as { blogContent: string }).blogContent;
   const userID = ((req as any).user as { id: string }).id;
+  const img = ((req as any).file as { filename: string }).filename;
+  console.log("haha");
+  console.log(req.file);
   try {
     const user: IUser | null = await User.findById(userID).select("-password");
     console.log(userID);
@@ -26,12 +46,41 @@ export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
       name: user.name,
       title: title,
       blogContent: blogContent,
+      img: img,
     };
     const newPost: IBlogPost = new BlogPost(post);
     newPost.save();
     res.json(newPost);
   } catch (error) {
     res.status(400).json({ msg: error });
+  }
+};
+
+//EDIT POST
+export const BlogPostEditPostCTRL = async (req: Req, res: Res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const userID = ((req as any).user as { id: string }).id;
+  const postID = ((req as any).params as { post_id: string }).post_id;
+  try {
+    const updatedPost = req.body;
+    const post: IBlogPost | null = await BlogPost.findOneAndUpdate(
+      {
+        user: userID,
+        _id: postID,
+      },
+      { $set: updatedPost },
+      { new: true }
+    );
+    if (!post) {
+      return res.status(400).json({ msg: "Can't find post" });
+    }
+    await post.save();
+    res.json(post);
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
   }
 };
 
@@ -135,7 +184,7 @@ export const BlogPostDeleteCommentCTRL = async (req: Req, res: Res) => {
       return res.status(400).json({ msg: "Can't find post ID" });
     }
     const newComments = post!.comments!.filter((comment) => {
-      const commentID = (comment as any).id.toString();
+      const commentID = ((comment as any) as { id: ObjectID }).id.toString();
       return commentID !== commentIDtoDelete;
     });
     post.comments = newComments;

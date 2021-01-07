@@ -9,6 +9,7 @@ export interface IBlogPost extends Document {
   comments?: object[];
   likes?: object[];
   date: string;
+  img: string;
 }
 const BlogPostSchema: Schema = new mongoose.Schema({
   user: {
@@ -27,6 +28,10 @@ const BlogPostSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
     trimg: true,
+  },
+  img: {
+    type: String,
+    default: "",
   },
   comments: { type: Array, default: [] },
   likes: { type: Array, default: [] },
