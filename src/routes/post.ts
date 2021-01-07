@@ -5,6 +5,8 @@ import {
   BlogPostCTRL,
   BlogPostDeleteCTRL,
   BlogPostLikeCTRL,
+  BlogPostCommentCTRL,
+  BlogPostDeleteCommentCTRL,
 } from "../controllers/postCtrl";
 const router = express.Router();
 
@@ -27,5 +29,23 @@ router.delete("/blog-post/:post_id", auth, BlogPostDeleteCTRL);
 //@Like Post
 //@api
 router.patch("/blog-post/:post_id", auth, BlogPostLikeCTRL);
+
+//@METHOD post
+//@Comment in Post
+//@api /post/blog-post/comment/:post_id
+router.post(
+  "/blog-post/comment/:post_id",
+  [auth, check("comment", "Comment should not be empty").not().isEmpty()],
+  BlogPostCommentCTRL
+);
+
+//@METHOD delete
+//@Delete a comment in Post
+//@api /post/blog-post/comment/:post_id/:comment_id
+router.delete(
+  "/blog-post/comment/:post_id/:comment_id",
+  auth,
+  BlogPostDeleteCommentCTRL
+);
 
 export default { router };

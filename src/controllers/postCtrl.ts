@@ -5,6 +5,7 @@ import { validationResult } from "express-validator";
 import { Req, Res, Nxt } from "../TS/types";
 import { ObjectID } from "mongodb";
 
+//POST A BLOGPOST
 export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -34,6 +35,7 @@ export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
   }
 };
 
+//DELETE POST
 export const BlogPostDeleteCTRL: RequestHandler = async (
   req: Req,
   res: Res
@@ -52,6 +54,7 @@ export const BlogPostDeleteCTRL: RequestHandler = async (
   }
 };
 
+//LIKE
 export const BlogPostLikeCTRL: RequestHandler = async (req: Req, res: Res) => {
   const blogPostID = req.params.post_id;
   const userID = ((req as any).user as { id: string }).id;
@@ -68,9 +71,7 @@ export const BlogPostLikeCTRL: RequestHandler = async (req: Req, res: Res) => {
       const likeID: string = (like as any)._id.toString();
       return likeID === userID;
     });
-    console.log(post.likes);
-    console.log(isLiked);
-    console.log(userID);
+
     if (isLiked?.length !== 0) {
       newLikes = post.likes!.filter((like) => {
         const likeID = (like as any)._id.toString();
@@ -81,6 +82,63 @@ export const BlogPostLikeCTRL: RequestHandler = async (req: Req, res: Res) => {
       return res.json(post);
     }
     (post as any).likes?.push(user);
+    await post.save();
+    res.json(post);
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+};
+
+//COMMENT IN POST
+export const BlogPostCommentCTRL: RequestHandler = async (
+  req: Req,
+  res: Res
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ msg: errors.array() });
+  }
+  const postID = (req.params as { post_id: string }).post_id;
+  const userID = (req as any).user.id;
+  try {
+    let post: IBlogPost | null = await BlogPost.findByIdAndUpdate(postID);
+    const user: IUser | null = await User.findOne({ _id: userID }).select(
+      "-password"
+    );
+    if (!post) {
+      return res.status(400).json({ msg: "Can't find post" });
+    }
+    const newComment = {
+      id: new ObjectID(),
+      name: user!.name,
+      avatar: user!.avatar,
+      user: userID,
+      date: new Date().toISOString(),
+      likes: [],
+      ...req.body,
+    };
+    (post as any).comments.push(newComment);
+    await post.save();
+    res.json(post);
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+};
+
+//DELETE A COMMENT
+export const BlogPostDeleteCommentCTRL = async (req: Req, res: Res) => {
+  const postID = (req.params as { post_id: string }).post_id;
+  const commentIDtoDelete = (req.params as { comment_id: string }).comment_id;
+  try {
+    let post = await BlogPost.findByIdAndUpdate(postID);
+    if (!post) {
+      return res.status(400).json({ msg: "Can't find post ID" });
+    }
+    const newComments = post!.comments!.filter((comment) => {
+      const commentID = (comment as any).id.toString();
+      return commentID !== commentIDtoDelete;
+    });
+    post.comments = newComments;
     await post.save();
     res.json(post);
   } catch (error) {

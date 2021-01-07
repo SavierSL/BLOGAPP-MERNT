@@ -6,7 +6,7 @@ export interface IBlogPost extends Document {
   name: string;
   title: string;
   blogContent: string;
-  comment?: object[];
+  comments?: object[];
   likes?: object[];
   date: string;
 }
