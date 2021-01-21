@@ -32,7 +32,7 @@ export const BlogPostCTRL: RequestHandler = async (req: Req, res: Res) => {
   const blogContent = (req.body as { blogContent: string }).blogContent;
   const userID = ((req as any).user as { id: string }).id;
   const img = ((req as any).file as { filename: string }).filename;
-  console.log("haha");
+  
   console.log(req.file);
   try {
     const user: IUser | null = await User.findById(userID).select("-password");
